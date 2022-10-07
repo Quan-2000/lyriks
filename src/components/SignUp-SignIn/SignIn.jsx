@@ -1,83 +1,165 @@
-import React, { useState } from "react";
+/* eslint-disable jsx-a11y/img-redundant-alt */
+import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import firebase from 'firebase/compat/app';
+import auth from '../../firebase';
 
 const SignIn = () => {
-  const [signInForm, setSignInForm] = useState({
-    email: '',
-    password: '',
-  });
+  const [name, setName] = useState('');
+  const [url, setUrl] = useState('');
+  const handleSubmit = async () => {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const res = await auth.signInWithPopup(provider);
+      const accessToken = res.credential?.accessToken;
+      const profile = {
+        name: res.additionalUserInfo.profile.name,
+        photoURL: res.additionalUserInfo.profile.picture,
+      };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { email, password } = signInForm;
-    console.log(signInForm);
-    fetch('http://localhost:5000/register', {
-      method: 'POST',
-      crossDomain: true,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    }).then((res) => res.json()).then((data) => {
-      console.log(data, 'userRegister');
-      if (data.status === 'OK') {
-        window.localStorage.setItem('token', data.data);
-        window.location.href = '';
-      }
-    });
+      sessionStorage.setItem('harri-access-token', accessToken);
+      sessionStorage.setItem('harri-user', JSON.stringify(profile));
+      console.log(profile);
+      setName(profile.name);
+      setUrl(profile.photoURL);
+      return { accessToken, profile };
+    } catch (error) {
+      console.log(error.message);
+      return error.message;
+    }
   };
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col w-full p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
-      <h3 className="font-bold text-3xl text-white text-left mt-4 mb-10">Sign In</h3>
+  // <>
+  //   <button onClick={handleSubmit} className="bg-red-500">
+  //     SIGN IN
+  //   </button>
+  //   <p>{name}</p>
+  //   <img src={url} className="mx-auto" />
+  // </>
+    <section className="h-screen">
+      <div className="px-6 h-full text-gray-800">
+        <div className="xl:ml-20 xl:w-5/12 lg:w-5/12 md:w-8/12 mb-12 md:mb-0">
+          <form>
+            <div className="flex flex-row items-center justify-center lg:justify-start">
+              <p className="text-lg text-white mb-0 mr-4">Sign in with</p>
+              <button
+                type="button"
+                data-mdb-ripple="true"
+                data-mdb-ripple-color="light"
+                className="inline-block p-3 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out mx-1"
+              >
+                {/* Facebook */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" className="w-4 h-4">
+                  <path
+                    fill="currentColor"
+                    d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"
+                  />
+                </svg>
+              </button>
 
-      <div className="mb-3">
-        <label className="font-bold text-3xl text-white text-left mt-4 mb-10">Email address</label>
-        <input
-          type="email"
-          className="form-control"
-          placeholder="Enter email"
-          onChange={(e) => {
-            setSignInForm({ ...signInForm, email: e.target.value });
-          }}
-        />
-      </div>
+              <button
+                type="button"
+                data-mdb-ripple="true"
+                data-mdb-ripple-color="light"
+                className="inline-block p-3 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out mx-1"
+              >
+                {/* Twitter */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4 h-4">
+                  <path
+                    fill="currentColor"
+                    d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
+                  />
+                </svg>
+              </button>
 
-      <div className="mb-3">
-        <label className="font-bold text-3xl text-white text-left mt-4 mb-10">Password</label>
-        <input
-          type="password"
-          className="form-control"
-          placeholder="Enter password"
-          onChange={(e) => setSignInForm({ ...signInForm, password: e.target.value })}
-        />
-      </div>
+              <button
+                type="button"
+                data-mdb-ripple="true"
+                data-mdb-ripple-color="light"
+                className="inline-block p-3 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out mx-1"
+              >
+                {/* Linkedin */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="w-4 h-4">
+                  <path
+                    fill="currentColor"
+                    d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"
+                  />
+                </svg>
+              </button>
 
-      <div className="mb-3">
-        <div className="custom-control custom-checkbox">
-          <input
-            type="checkbox"
-            className="custom-control-input"
-            id="customCheck1"
-          />
-          <label className="custom-control-label font-bold text-3xl text-white text-left mt-4 mb-10" htmlFor="customCheck1">
-            Remember me
-          </label>
+              <button
+                onClick={handleSubmit}
+                type="button"
+                data-mdb-ripple="true"
+                data-mdb-ripple-color="light"
+                className="inline-block p-3 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out mx-1"
+              >
+                {/* Google */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-google" viewBox="0 0 16 16">
+                  <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"/>
+                </svg>
+              </button>
+
+              <img src={url} className="width: 22px height: 22px border-radius: 100% border: 1px solid rgba(0, 0, 0, 0.1)" />
+              <span className="margin-left: 4px font-size: 1.4rem font-weight: 400">{name}</span>
+            </div>
+
+            <div className="flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5">
+              <p className="text-center text-white font-semibold mx-4 mb-0">Or</p>
+            </div>
+
+            {/* Email input */}
+            <div className="mb-6">
+              <input
+                type="text"
+                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                id="exampleFormControlInput2"
+                placeholder="Email address"
+              />
+            </div>
+
+            {/* Password input */}
+            <div className="mb-6">
+              <input
+                type="password"
+                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                id="exampleFormControlInput2"
+                placeholder="Password"
+              />
+            </div>
+
+            <div className="flex justify-between items-center mb-6">
+              <div className="form-group form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+                  id="exampleCheck2"
+                />
+                <label className="form-check-label inline-block text-white" htmlFor="exampleCheck2">Remember me</label>
+              </div>
+              <a href="#!" className="text-white">Forgot password?</a>
+            </div>
+
+            <div className="text-center lg:text-left">
+              <button
+                type="button"
+                className="inline-block px-7 py-3 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+              >
+                Login
+              </button>
+              <p className="text-sm text-white font-semibold mt-2 pt-1 mb-0">Don't have an account?</p>
+              <a href="#!" className="text-red-600 hover:text-red-700 focus:text-red-700 transition duration-200 ease-in-out">Register</a>
+            </div>
+          </form>
+        </div>
+        <div className="flex xl:justify-center lg:justify-between justify-center items-center flex-wrap h-full g-6">
+          <div className="grow-0 shrink-1 md:shrink-0 basis-auto xl:w-6/12 lg:w-6/12 md:w-9/12 mb-12 md:mb-0">
+            {/* <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" className="w-full" alt="Sample image" /> */}
+          </div>
         </div>
       </div>
-
-      <div className="">
-        <button type="submit" className="btn btn-primary flex flex-col w-[250px] p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
-          Submit
-        </button>
-      </div>
-      <p className="forgot-password text-right">
-        <a href="/sign-up" className="font-bold text-3xl text-white text-left mt-4 mb-10">Sign Up</a>
-      </p>
-    </form>
+    </section>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const SignUp = () => {
   const [signUpForm, setSignUpForm] = useState({
@@ -31,11 +31,9 @@ const SignUp = () => {
     });
   };
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col w-[250px] p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
-      <h3 className="font-bold text-3xl text-white text-left mt-4 mb-10">Sign Up</h3>
-
+    <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col w-[500px] p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
       <div className="mb-3">
-        <label className="font-bold text-3xl text-white text-left mt-4 mb-10">First name</label>
+        <label className="font-bold text-2xl text-white text-left mt-4 mb-10">First name</label>
         <input
           type="text"
           className="form-control"
@@ -45,7 +43,7 @@ const SignUp = () => {
       </div>
 
       <div className="mb-3">
-        <label className="font-bold text-3xl text-white text-left mt-4 mb-10">Last name</label>
+        <label className="font-bold text-2xl text-white text-left mt-4 mb-10">Last name</label>
         <input
           type="text"
           className="form-control"
@@ -56,7 +54,7 @@ const SignUp = () => {
       </div>
 
       <div className="mb-3">
-        <label className="font-bold text-3xl text-white text-left mt-4 mb-10">Email address</label>
+        <label className="font-bold text-2xl text-white text-left mt-4 mb-10">Email address</label>
         <input
           type="email"
           className="form-control"
@@ -66,7 +64,7 @@ const SignUp = () => {
       </div>
 
       <div className="mb-3">
-        <label className="font-bold text-3xl text-white text-left mt-4 mb-10">Password</label>
+        <label className="font-bold text-2xl text-white text-left mt-4 mb-10">Password</label>
         <input
           type="password"
           className="form-control"
@@ -77,7 +75,7 @@ const SignUp = () => {
       </div>
 
       <div className="d-grid">
-        <button type="submit" className="btn btn-primary font-bold text-3xl text-white text-left mt-4 mb-10">
+        <button type="submit" className="btn btn-primary font-bold text-2xl text-white text-left mt-4 mb-10">
           Sign Up
         </button>
       </div>
